@@ -1,3 +1,2 @@
-rule:	main.c sgl.c
-	gcc -o main main.c sgl.c -I. && ./main
-	xdg-open test.ppm
+rule:	examples/*.c sgl.c
+	gcc -o test sgl.c examples/*.c -I.
