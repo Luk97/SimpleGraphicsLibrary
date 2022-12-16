@@ -1,6 +1,6 @@
 #include "sgl.h"
 
-Errno sgl_save_as_ppm(const sgl_canvas* canvas, const char* filepath)
+Errno SGL_save_as_ppm(const SGL_canvas* canvas, const char* filepath)
 {
     FILE* f = NULL;
     Errno result = 0;
@@ -28,7 +28,7 @@ defer:
     return result;
 }
 
-void sgl_fill_canvas(sgl_canvas* canvas, uint32_t color)
+void SGL_fill_canvas(SGL_canvas* canvas, uint32_t color)
 {
     for (size_t y = 0; y < canvas->height; ++y) {
         for (size_t x = 0; x < canvas->width; ++x) {
@@ -37,7 +37,7 @@ void sgl_fill_canvas(sgl_canvas* canvas, uint32_t color)
     }
 }
 
-void sgl_fill_rect(sgl_canvas* canvas, const sgl_rect* rect, uint32_t color)
+void SGL_fill_rect(SGL_canvas* canvas, const SGL_rect* rect, uint32_t color)
 {
     for (size_t y = rect->y; y < rect->y + rect->height; ++y) {
         for (size_t x = rect->x; x < rect->x + rect->width; ++x) {
@@ -46,7 +46,7 @@ void sgl_fill_rect(sgl_canvas* canvas, const sgl_rect* rect, uint32_t color)
     }
 }
 
-void sgl_fill_circle(sgl_canvas* canvas, const sgl_circle* c, uint32_t color)
+void SGL_fill_circle(SGL_canvas* canvas, const SGL_circle* c, uint32_t color)
 {
     int x1 = c->cx - c->radius;
     int y1 = c->cy - c->radius;
