@@ -1,2 +1,2 @@
 rule:	examples/*.c sgl.c
-	gcc -o test sgl.c examples/*.c -I.
+	gcc -o checkerboard sgl.c examples/*.c -I.
