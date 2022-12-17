@@ -9,11 +9,12 @@
 
 // --- Macros ---
 #define SGL_SWAP(T, a, b) do { T t = a; a = b; b = t; } while (0)
+#define SGL_ABS(a) ((a) < 0 ? -(a) : (a))
 
 // --- Error handling ---
 #include <errno.h>
 #define Errno int
-#define errno_return(value) do { result = value; goto defer; } while (0)
+#define errno_return(val) do { result = val; goto defer; } while (0)
 
 typedef struct {
     uint32_t* pixels;

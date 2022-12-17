@@ -73,19 +73,23 @@ void SGL_draw_line(SGL_canvas* canvas, int x1, int y1, int x2, int y2, uint32_t 
     int dx = x2 - x1;
     int dy = y2 - y1;
 
-    if (dx != 0)
+    // same coordinates
+    if (dx == 0 && dy == 0)
     {
-        int b = y1 - (dy * x1) / dx;
-
+        canvas->pixels[y1 * canvas->width + x1] = color;
+    }
+    else if (dx != 0)
+    {
+        int b = y1 - dy * x1 / dx;
         if (x1 > x2) SGL_SWAP(int, x1, x2);
 
-        for (size_t x = x1; x < x2; ++x) {
+        for (int x = x1; x <= x2; ++x) {
             if (0 <= x && x < canvas->width) {
-                int cur_y = (dy * x) / dx + b;
-                int nxt_y = (dy * (x+1)) / dx + b;
+                int cur_y = dy * x / dx + b;
+                int nxt_y = dy * (x+1) / dx + b;
                 if (cur_y > nxt_y) SGL_SWAP(int, cur_y, nxt_y);
 
-                for (size_t y = cur_y; y < nxt_y; ++y) {
+                for (int y = cur_y; y <= nxt_y; ++y) {
                     if (0 <= y && y < canvas->height) {
                         canvas->pixels[y * canvas->width + x] = color;
                     } 
