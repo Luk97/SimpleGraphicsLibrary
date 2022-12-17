@@ -78,7 +78,23 @@ void SGL_draw_line(SGL_canvas* canvas, int x1, int y1, int x2, int y2, uint32_t 
     {
         canvas->pixels[y1 * canvas->width + x1] = color;
     }
-    else if (dx != 0)
+    // vertical line
+    else if (dx == 0)
+    {    
+        // return if line would be invisible
+        if (x1 < 0 || x1 > canvas->width) return;
+
+        // clamp
+        if (y1 > y2) SGL_SWAP(int, y1, y2);
+        if (y1 < 0) y1 = 0;
+        if (y2 > canvas->height) y2 = canvas->height;
+
+        for (size_t y = y1;  y < y2; ++y) {
+            canvas->pixels[y * canvas->width + x1] = color;
+        }
+    }
+    // all other lines
+    else
     {
         int b = y1 - dy * x1 / dx;
         if (x1 > x2) SGL_SWAP(int, x1, x2);
@@ -97,19 +113,4 @@ void SGL_draw_line(SGL_canvas* canvas, int x1, int y1, int x2, int y2, uint32_t 
             }
         }
     }
-    else    // vertical line
-    {    
-        // return if line would be invisible
-        if (x1 < 0 || x1 > canvas->width) return;
-
-        // clamp
-        if (y1 > y2) SGL_SWAP(int, y1, y2);
-        if (y1 < 0) y1 = 0;
-        if (y2 > canvas->height) y2 = canvas->height;
-
-        for (size_t y = y1;  y < y2; ++y) {
-            canvas->pixels[y * canvas->width + x1] = color;
-        }
-    }
-
 }

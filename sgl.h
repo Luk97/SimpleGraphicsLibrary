@@ -7,7 +7,7 @@
 // --- SGL Headers ---
 #include "coloring/color_defs.h"
 
-// --- Macros ---
+// --- Helper Macros ---
 #define SGL_SWAP(T, a, b) do { T t = a; a = b; b = t; } while (0)
 #define SGL_ABS(a) ((a) < 0 ? -(a) : (a))
 

@@ -7,3 +7,6 @@ checkerboard:	examples/checkerboard.c sgl.c
 japanflag: examples/japanflag.c sgl.c
 	gcc -o japanflag sgl.c examples/japanflag.c -I.
 
+lines: examples/lines.c sgl.c
+	gcc -o lines sgl.c examples/lines.c -I.
+
