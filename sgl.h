@@ -7,6 +7,9 @@
 // --- SGL Headers ---
 #include "coloring/color_defs.h"
 
+// --- Macros ---
+#define SGL_SWAP(T, a, b) do { T t = a; a = b; b = t; } while (0)
+
 // --- Error handling ---
 #include <errno.h>
 #define Errno int
@@ -52,5 +55,7 @@ void SGL_fill_rect(SGL_canvas* canvas, const SGL_rect* rect, uint32_t color);
     Fills circle with given color. Position of circle is the center.
 */
 void SGL_fill_circle(SGL_canvas* canvas, const SGL_circle* circle, uint32_t color);
+
+void SGL_draw_line(SGL_canvas* canvas, int x1, int y1, int x2, int y2, uint32_t color);
 
 #endif

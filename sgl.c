@@ -67,3 +67,45 @@ void SGL_fill_circle(SGL_canvas* canvas, const SGL_circle* c, uint32_t color)
         }
     }
 }
+
+void SGL_draw_line(SGL_canvas* canvas, int x1, int y1, int x2, int y2, uint32_t color)
+{
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+
+    if (dx != 0)
+    {
+        int b = y1 - (dy * x1) / dx;
+
+        if (x1 > x2) SGL_SWAP(int, x1, x2);
+
+        for (size_t x = x1; x < x2; ++x) {
+            if (0 <= x && x < canvas->width) {
+                int cur_y = (dy * x) / dx + b;
+                int nxt_y = (dy * (x+1)) / dx + b;
+                if (cur_y > nxt_y) SGL_SWAP(int, cur_y, nxt_y);
+
+                for (size_t y = cur_y; y < nxt_y; ++y) {
+                    if (0 <= y && y < canvas->height) {
+                        canvas->pixels[y * canvas->width + x] = color;
+                    } 
+                }
+            }
+        }
+    }
+    else    // vertical line
+    {    
+        // return if line would be invisible
+        if (x1 < 0 || x1 > canvas->width) return;
+
+        // clamp
+        if (y1 > y2) SGL_SWAP(int, y1, y2);
+        if (y1 < 0) y1 = 0;
+        if (y2 > canvas->height) y2 = canvas->height;
+
+        for (size_t y = y1;  y < y2; ++y) {
+            canvas->pixels[y * canvas->width + x1] = color;
+        }
+    }
+
+}
