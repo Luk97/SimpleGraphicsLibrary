@@ -1,4 +1,8 @@
 *.ppm
-main
-test
 .vscode*
+
+#examples
+checkerboard
+japanflag
+lines
+test

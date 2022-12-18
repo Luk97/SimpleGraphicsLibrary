@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     const char* filepath = "./checkerboard.ppm";
 
     // canvas which can be drawn on
-    SGL_canvas canvas = {
+    SGL_Canvas canvas = {
         .pixels = pixels,
         .width = WINDOW_WIDTH,
         .height = WINDOW_HEIGHT
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
     // a rect containing x and y position of top left corner and
     // its width and height
-    SGL_rect rect = {
+    SGL_Rect rect = {
         .x = 0,
         .y = 0,
         .width = 100,
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
             uint32_t color = (i + j & 1) ? SGL_COLOR_GREY : SGL_COLOR_RED;
 
             // draw a rect onto the canvas with a given color
-            SGL_fill_rect(&canvas, &rect, color);
+            SGL_draw_rect(&canvas, &rect, color);
         }
     }
 

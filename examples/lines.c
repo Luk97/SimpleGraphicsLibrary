@@ -7,7 +7,7 @@ uint32_t pixels[WIDTH * HEIGHT];
 
 int main()
 {
-    SGL_canvas canvas = {
+    SGL_Canvas canvas = {
         .width = WIDTH,
         .height = HEIGHT,
         .pixels = pixels

@@ -7,7 +7,7 @@ int main()
     const char* filepath = "japanflag.ppm";
 
 
-    SGL_canvas canvas = {
+    SGL_Canvas canvas = {
         .width = 800,
         .height = 600,
         .pixels = pixels
@@ -15,13 +15,13 @@ int main()
 
     SGL_fill_canvas(&canvas, SGL_COLOR_WHITE);
 
-    SGL_circle circle = {
+    SGL_Circle circle = {
         .cx = 400,
         .cy = 300,
         .radius = 100
     };
 
-    SGL_fill_circle(&canvas, &circle, SGL_COLOR_RED);
+    SGL_draw_circle(&canvas, &circle, SGL_COLOR_RED);
 
     int err = SGL_save_as_ppm(&canvas, filepath);
     if (err != 0) return -1;
