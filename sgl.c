@@ -48,7 +48,7 @@ void fill_canvas_structs(const SGL_Canvas* canvas, uint32_t color)
     }
 }
 
-void fill_canvas_singles(uint32_t* pixels, int width, int height, uint32_t color)
+void fill_canvas(uint32_t* pixels, int width, int height, uint32_t color)
 {
     SGL_Canvas canvas = {
         .width = width,
@@ -106,8 +106,8 @@ void draw_rect_structs(const SGL_Canvas* canvas, const SGL_Rect* param_rect, uin
     }
 }
 
-void draw_rect_singles(uint32_t* pixels, int canvas_width, int canvas_height,
-                           int rect_x, int rect_y, int rect_width, int rect_height, uint32_t color)
+void draw_rect(uint32_t* pixels, int canvas_width, int canvas_height,
+                int rect_x, int rect_y, int rect_width, int rect_height, uint32_t color)
 {
     SGL_Canvas canvas = {
         .width = canvas_width,
@@ -139,8 +139,8 @@ bool check_circle_bounds(const SGL_Canvas* canvas, const SGL_Circle* c)
     return true;
 }
 
-void draw_circle_singles(uint32_t* pixels, int canvas_width, int canvas_height,
-                             int cx, int cy, int radius, uint32_t color)
+void draw_circle(uint32_t* pixels, int canvas_width, int canvas_height,
+                int cx, int cy, int radius, uint32_t color)
 {
     SGL_Canvas canvas = {
         .width = canvas_width,
@@ -182,10 +182,120 @@ void draw_circle_structs(const SGL_Canvas* canvas, const SGL_Circle* c, uint32_t
 
 
 
+// ------------- TRIANGLE -------------
 
-
-void SGL_draw_line(SGL_Canvas* canvas, int x1, int y1, int x2, int y2, uint32_t color)
+void order_points_by_y(SGL_Triangle* src, SGL_Triangle* dst)
 {
+    dst->x1 = src->x1;
+    dst->y1 = src->y1;
+    dst->x2 = src->x2;
+    dst->y2 = src->y2;
+    dst->x3 = src->x3;
+    dst->y3 = src->y3;
+
+    if (dst->y1 > dst->y2) {
+        SGL_SWAP(int, dst->x1, dst->x2);
+        SGL_SWAP(int, dst->y1, dst->y2);
+    }
+
+    if (dst->y2 > dst->y3) {
+        SGL_SWAP(int, dst->x2, dst->x3);
+        SGL_SWAP(int, dst->y2, dst->y3);
+    }
+
+    if (dst->y1 > dst->y2) {
+        SGL_SWAP(int, dst->x1, dst->x2);
+        SGL_SWAP(int, dst->y1, dst->y2);
+    }
+}
+
+void draw_triangle(uint32_t* pixels, int canvas_width, int canvas_height,
+                    int x1, int y1, int x2, int y2, int x3, int y3, uint32_t color)
+{
+    SGL_Canvas canvas = {
+        .width = canvas_width,
+        .height = canvas_height,
+        .pixels = pixels
+    };
+    SGL_Triangle tri = {
+        .x1 = x1,
+        .y1 = y1,
+        .x2 = x2,
+        .y2 = y2,
+        .x3 = x3,
+        .y3 = y3
+    };
+    draw_triangle_structs(&canvas, &tri, color);
+}
+
+void draw_triangle_structs(SGL_Canvas* canvas, SGL_Triangle* param_tri, uint32_t color)
+{
+    if (!check_canvas_bounds(canvas)) return;
+
+    SGL_Triangle tri;
+    order_points_by_y(param_tri, &tri);
+
+    int dx12 = tri.x2 - tri.x1;
+    int dy12 = tri.y2 - tri.y1;
+    int dx13 = tri.x3 - tri.x1;
+    int dy13 = tri.y3 - tri.y1;
+
+    for (int y = tri.y1; y <= tri.y2; ++y) {
+        if (0 <= y && y < canvas->height) {
+            int x_left = (dy12 != 0) ? (y - tri.y1) * dx12 / dy12 + tri.x1 : tri.x1;
+            int x_right = (dy13 != 0) ? (y - tri.y1) * dx13 / dy13 + tri.x1 : tri.x1;
+            if (x_left > x_right) SGL_SWAP(int, x_left, x_right);
+
+            for (int x = x_left; x <= x_right; ++x) {
+                if (0 <= x && x < canvas->width) {
+                    canvas->pixels[y * canvas->width + x] = color;
+                }
+            }
+        }
+    }
+
+    int dx32 = tri.x2 - tri.x3;
+    int dy32 = tri.y2 - tri.y3;
+    int dx31 = tri.x1 - tri.x3;
+    int dy31 = tri.y1 - tri.y3;
+
+    for (int y = tri.y2; y <= tri.y3; ++y) {
+        if (0 <= y && y < canvas->height) {
+            int x_left  = (dy32 != 0) ? (y - tri.y3) * dx32 / dy32 + tri.x3 : tri.x3;
+            int x_right = (dy13 != 0) ? (y - tri.y3) * dx31 / dy31 + tri.x3 : tri.x3;
+            if (x_left > x_right) SGL_SWAP(int, x_left, x_right);
+
+            for (int x = x_left; x <= x_right; ++x) {
+                if (0 <= x && x < canvas->width) {
+                    canvas->pixels[y * canvas->width + x] = color;
+                }
+            }
+        }
+    }
+}
+
+
+
+// ------------- LINE -------------
+
+bool check_line_bounds(SGL_Canvas* canvas, SGL_Line* line)
+{
+    if (line->x1 < 0 && line->x2 < 0) return false;
+    if (line->x1 >= canvas->width && line->x2 >= canvas->width) return false;
+    if (line->y1 < 0 && line->y2 < 0) return false;
+    if (line->y1 >= canvas->height && line->y2 >= canvas->height) return false;
+
+    return true;
+}
+
+void draw_line_structs(SGL_Canvas* canvas, SGL_Line* line, uint32_t color)
+{
+    if (!check_canvas_bounds(canvas)) return;
+    if (!check_line_bounds(canvas, line)) return;
+
+    int x1 = line->x1, y2 = line->y1;
+    int x2 = line->x2 ,y2 = line->y2;
+
     int dx = x2 - x1;
     int dy = y2 - y1;
 
@@ -229,4 +339,21 @@ void SGL_draw_line(SGL_Canvas* canvas, int x1, int y1, int x2, int y2, uint32_t 
             }
         }
     }
+}
+
+void draw_line_(uint32_t* pixels, int width, int height,
+                int x1, int y1, int x2, int y2, uint32_t color)
+{
+    SGL_Canvas canvas = {
+        .width = width,
+        .height = height,
+        .pixels = pixels
+    };
+    SGL_Line line = {
+        .x1 = x1,
+        .y1 = y1,
+        .x2 = x2,
+        .y2 = y2
+    };
+    draw_line_structs(&canvas, &line, color);
 }
